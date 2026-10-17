@@ -72,13 +72,14 @@
   .lead b.v{color:var(--blood)}
 
   /* ---------- bottom ---------- */
-  .lower{display:grid;grid-template-columns:1.75fr 1fr;gap:3vw;min-height:0}
+  .lower{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3vw;min-height:0}
+  .lower > *{min-width:0}
   .card{background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01));border:1px solid var(--line);border-radius:1.4vh;padding:2.6vh 2vw;min-height:0;display:flex;flex-direction:column}
   .card h2{font-size:1.3vh;letter-spacing:.45em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:1.6vh;display:flex;justify-content:space-between}
 
   .feed{list-style:none;flex:1;min-height:0;overflow:hidden;
     -webkit-mask-image:linear-gradient(#000 75%,transparent);mask-image:linear-gradient(#000 75%,transparent)}
-  .feed li{display:grid;grid-template-columns:.35vw 1fr auto;gap:1.4vw;align-items:center;padding:1.5vh 0;border-bottom:1px solid var(--line)}
+  .feed li{display:grid;grid-template-columns:.35vw minmax(0,1fr) auto;gap:1.4vw;align-items:center;padding:1.5vh 0;border-bottom:1px solid var(--line)}
   .feed li .stripe{align-self:stretch;border-radius:9px;background:var(--bone)}
   .feed li.v .stripe{background:var(--blood)}
   .feed .what{font-family:var(--serif);font-weight:700;font-size:2.7vh;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
