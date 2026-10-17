@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0708">
+<title>Your Task · Heroes vs Villains</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0708; --line:rgba(255,235,225,.1);
+    --bone:#efe6d8; --blood:#d4142a; --muted:#8d817c;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{background:var(--ink)}
+  body{
+    min-height:100vh;min-height:100dvh;color:var(--bone);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+    background:radial-gradient(140vw 60vh at 50% 110%, rgba(212,20,42,.22), transparent 60%), var(--ink);
+    display:flex;justify-content:center;
+  }
+  main{width:100%;max-width:460px;padding:max(28px, env(safe-area-inset-top)) 20px 40px;display:flex;flex-direction:column;gap:22px}
+  .kicker{font-size:11px;letter-spacing:.45em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h1{font-family:var(--serif);font-weight:900;font-size:40px;line-height:1.02;margin-top:8px}
+  h1 em{font-style:italic;font-weight:700;color:var(--blood)}
+  .sub{color:var(--muted);font-size:14px;line-height:1.5;margin-top:10px}
+
+  .label{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px}
+  .sides{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .side{appearance:none;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--bone);border-radius:14px;padding:18px 10px;
+    font-family:var(--serif);font-weight:800;font-size:22px;cursor:pointer;transition:all .2s}
+  .side small{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:4px}
+  .side[aria-pressed="true"].h{background:var(--bone);color:var(--ink);border-color:var(--bone)}
+  .side[aria-pressed="true"].h small{color:#5a4f4a}
+  .side[aria-pressed="true"].v{background:var(--blood);color:#fff;border-color:var(--blood);box-shadow:0 0 30px rgba(212,20,42,.35)}
+  .side[aria-pressed="true"].v small{color:#ffd0d5}
+
+  input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:14px;color:var(--bone);font:500 16px var(--sans)}
+  input::placeholder{color:#6d625e}
+  input:focus{outline:none;border-color:var(--blood)}
+
+  .draw{appearance:none;border:0;width:100%;border-radius:14px;padding:20px;cursor:pointer;
+    background:var(--blood);color:#fff;font:800 15px var(--sans);letter-spacing:.25em;text-transform:uppercase;
+    box-shadow:0 10px 40px rgba(212,20,42,.35);transition:transform .15s, opacity .2s}
+  .draw:active{transform:scale(.98)}
+  .draw:disabled{background:rgba(255,255,255,.05);color:var(--muted);box-shadow:none;cursor:default;border:1px solid var(--line)}
+  .draw .cd{font-family:var(--serif);font-size:22px;letter-spacing:0;text-transform:none;display:block;color:var(--bone);margin-top:4px;font-variant-numeric:tabular-nums lining-nums}
+  .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:-10px}
+
+  .task{border:1px solid var(--line);border-radius:18px;padding:24px 22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));position:relative;overflow:hidden}
+  .task::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--bone)}
+  .task.v::before{background:var(--blood)}
+  .task .tag{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .task .pts{color:var(--bone)}
+  .task.v .pts{color:var(--blood)}
+  .task .text{font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.2;margin:14px 0 20px}
+  .task.old{opacity:.55}
+  .task.reveal{animation:reveal .7s cubic-bezier(.2,.9,.3,1)}
+  @keyframes reveal{from{opacity:0;transform:translateY(12px) scale(.98)}}
+  .shuffle .text{filter:blur(1px);opacity:.6}
+
+  .claim{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:15px;
+    border:1px solid var(--bone);color:var(--bone);font:700 13px var(--sans);letter-spacing:.2em;text-transform:uppercase}
+  .task.v .claim{border-color:var(--blood);color:#ff4a5e}
+
+  .switch{background:none;border:0;color:var(--muted);font:500 13px var(--sans);text-decoration:underline;cursor:pointer;align-self:center}
+  .msg{color:var(--muted);text-align:center;font-size:14px;line-height:1.5}
+  .msg button{background:none;border:0;color:var(--blood);font:600 14px var(--sans);text-decoration:underline;cursor:pointer}
+  .hidden{display:none !important}
+  footer{text-align:center;font-size:11px;color:#5d534f;letter-spacing:.15em;text-transform:uppercase;margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker">Zwomita's Halloween</div>
+    <h1>Your <em>scheme</em> awaits</h1>
+    <p class="sub">Draw a random task. Pull it off, then claim your points. A new task unlocks every 10 minutes.</p>
+  </header>
+
+  <!-- Step 1: pick a side -->
+  <section id="setup">
+    <div class="label">Your name <span style="letter-spacing:.1em;text-transform:none;font-weight:500">(optional, for glory)</span></div>
+    <input id="name" autocomplete="given-name" placeholder="e.g. Zoe">
+    <div class="label" style="margin-top:22px">Choose your side</div>
+    <div class="sides">
+      <button class="side h" data-side="Hero" aria-pressed="false">Hero</button>
+      <button class="side v" data-side="Villain" aria-pressed="false">Villain</button>
+    </div>
+  </section>
+
+  <!-- Step 2: draw -->
+  <section id="play" class="hidden" style="display:flex;flex-direction:column;gap:22px">
+    <button class="draw" id="draw">Give me a task</button>
+    <p class="hint" id="hint"></p>
+    <div id="taskWrap"></div>
+    <button class="switch" id="switch">Switch sides / change name</button>
+  </section>
+
+  <p class="msg hidden" id="msg"></p>
+  <footer id="foot"></footer>
+</main>
+
+<script>
+/* ====== CONFIG ====== */
+const SHEET_ID   = '1_IWCVRpsNjjjFByLD9MowAjtP18OBvrA5Ou_2Gzrmz4';
+const TASKS_TAB  = 'Tasks';
+const COOLDOWN_MINUTES = 10;
+const FORM_URL   = 'https://docs.google.com/forms/d/e/1FAIpQLSfjPPQe_HEHpsui35EVMReKszdWyzw99ziRNlQgvob1CZatfg/viewform';
+const ENTRY = { team:'entry.1918556494', deed:'entry.473199257', points:'entry.199564436', witness:'entry.997502539', name:'entry.1048309193' };
+
+const params = new URLSearchParams(location.search);
+const DEMO = params.has('demo');
+
+/* ====== tiny safe storage ====== */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('hv_'+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('hv_'+k, JSON.stringify(v)); }catch(e){} },
+  clear(){ try{ Object.keys(localStorage).filter(k=>k.startsWith('hv_')).forEach(k=>localStorage.removeItem(k)); }catch(e){} }
+};
+if(params.has('reset')){ store.clear(); history.replaceState(null,'',location.pathname); }   // host testing: tasks.html?reset
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ====== load tasks from the Sheet (JSONP, avoids CORS) ====== */
+let tasks = null, n = 0, drawing = false;
+function loadTasks(){
+  if(DEMO) return Promise.resolve([
+    {text:"Convince someone that you're on the opposite team than you actually are", points:3, team:''},
+    {text:'Convince someone to switch sides', points:3, team:''},
+    {text:'Get a stranger to do your signature pose with you', points:5, team:''},
+    {text:'Deliver a 10-second villain monologue to a hero', points:4, team:'Villain'},
+    {text:'Rescue someone with an empty cup: refill it', points:2, team:'Hero'},
+  ]);
+  return new Promise((resolve, reject)=>{
+    const cb = '__hvT' + (++n), s = document.createElement('script');
+    const t = setTimeout(()=>{ done(); reject(new Error('timeout')); }, 12000);
+    function done(){ clearTimeout(t); delete window[cb]; s.remove(); }
+    window[cb] = res => { done();
+      if(!res || res.status==='error') return reject(new Error('sheet'));
+      let cols = res.table.cols.map(c=>(c.label||'').toLowerCase());
+      let rows = res.table.rows.map(r=>(r.c||[]).map(c=>c ? (c.v ?? c.f ?? '') : ''));
+      if(cols.every(c=>!c) && rows.length){ cols = rows[0].map(x=>String(x).toLowerCase()); rows = rows.slice(1); }
+      const find = (...k)=>{ for(const key of k){ const i=cols.findIndex(c=>c.includes(key)); if(i>-1) return i; } return -1; };
+      const iT = Math.max(0, find('task')), iP = find('point'), iTeam = find('team','side');
+      resolve(rows.map(r=>({
+        text: String(r[iT] ?? '').trim(),
+        points: iP>-1 ? Math.min(10, Math.max(0, Math.round(parseFloat(r[iP])) || 0)) : 0,
+        team: iTeam>-1 ? String(r[iTeam] ?? '').trim() : ''
+      })).filter(x=>x.text));
+    };
+    s.onerror = ()=>{ done(); reject(new Error('network')); };
+    s.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(TASKS_TAB)}&headers=1&tqx=responseHandler:${cb}&_=${Date.now()}`;
+    document.head.appendChild(s);
+  });
+}
+
+/* ====== state ====== */
+let side = store.get('side', null);
+$('name').value = store.get('name', '');
+
+function forMyTeam(list){
+  const me = (side||'').toLowerCase();
+  return list.filter(t=>{
+    const tm = t.team.toLowerCase();
+    return !tm || tm.includes('any') || tm.includes('both') || tm.includes(me);
+  });
+}
+
+function claimUrl(task){
+  const p = new URLSearchParams({ usp:'pp_url' });
+  p.set(ENTRY.team, side);
+  p.set(ENTRY.deed, task.text);
+  if(task.points >= 1) p.set(ENTRY.points, String(task.points));
+  const nm = $('name').value.trim(); if(nm) p.set(ENTRY.name, nm);
+  return FORM_URL + '?' + p.toString();
+}
+
+function cooldownLeft(){
+  const cur = store.get('current', null);
+  if(!cur) return 0;
+  return Math.max(0, cur.at + COOLDOWN_MINUTES*60000 - Date.now());
+}
+
+function renderTask(task, {old=false, reveal=false}={}){
+  if(!task){ $('taskWrap').innerHTML=''; return; }
+  const v = side==='Villain';
+  $('taskWrap').innerHTML = `
+    <article class="task ${v?'v':''} ${old?'old':''} ${reveal?'reveal':''}">
+      <div class="tag"><span>${old?'Last task':'Your task'}</span><span class="pts">${task.points ? task.points+' pts' : ''}</span></div>
+      <p class="text">${esc(task.text)}</p>
+      <a class="claim" href="${esc(claimUrl(task))}" target="_blank" rel="noopener">Done? Claim your points</a>
+    </article>`;
+}
+
+function fmt(ms){ const s=Math.ceil(ms/1000); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+
+function updateButton(){
+  if(drawing) return;
+  const left = cooldownLeft(), cur = store.get('current', null);
+  const btn = $('draw');
+  if(left > 0){
+    btn.disabled = true;
+    btn.innerHTML = `Next task unlocks in<span class="cd">${fmt(left)}</span>`;
+    $('hint').textContent = 'Go get it done. The clock is ticking.';
+  } else {
+    btn.disabled = !tasks;
+    btn.textContent = cur ? 'Give me a new task' : 'Give me a task';
+    $('hint').textContent = tasks ? '' : 'Loading tasks…';
+    const card = document.querySelector('.task');
+    if(card && !card.classList.contains('old') && cur){ renderTask(cur, {old:true}); }
+  }
+}
+
+function showPlay(){
+  $('setup').classList.add('hidden');
+  $('play').classList.remove('hidden');
+  const cur = store.get('current', null);
+  renderTask(cur, {old: cooldownLeft()===0});
+  $('foot').textContent = `Playing as ${$('name').value.trim() || 'a mystery'} · ${side}`;
+  updateButton();
+}
+function showSetup(){
+  $('play').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+  $('foot').textContent = '';
+  document.querySelectorAll('.side').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.side===side)));
+}
+
+/* ====== events ====== */
+document.querySelectorAll('.side').forEach(b=>b.addEventListener('click', ()=>{
+  side = b.dataset.side; store.set('side', side);
+  store.set('name', $('name').value.trim());
+  showPlay();
+}));
+$('name').addEventListener('input', ()=>store.set('name', $('name').value.trim()));
+$('switch').addEventListener('click', showSetup);
+
+$('draw').addEventListener('click', ()=>{
+  if(cooldownLeft() > 0 || !tasks) return;
+  const pool = forMyTeam(tasks);
+  if(!pool.length){ $('hint').textContent = 'No tasks for your side yet. Ask the host!'; return; }
+  let seen = store.get('seen', []);
+  const cur = store.get('current', null);
+  let fresh = pool.filter(t=>!seen.includes(t.text));
+  if(!fresh.length){ seen = []; fresh = pool.filter(t=>!cur || t.text!==cur.text); if(!fresh.length) fresh = pool; }
+  const pick = fresh[Math.floor(Math.random()*fresh.length)];
+
+  // little shuffle before the reveal
+  drawing = true; $('draw').disabled = true;
+  let i = 0;
+  const spin = setInterval(()=>{
+    const t = pool[Math.floor(Math.random()*pool.length)];
+    renderTask(t);
+    document.querySelector('.task').classList.add('shuffle');
+    if(++i >= 8){
+      clearInterval(spin); drawing = false;
+      store.set('seen', [...seen, pick.text]);
+      store.set('current', {...pick, at: Date.now()});
+      renderTask(pick, {reveal:true});
+      if(navigator.vibrate) navigator.vibrate(40);
+      updateButton();
+    }
+  }, 90);
+});
+
+/* ====== start ====== */
+function refreshTasks(){
+  return loadTasks().then(list=>{
+    tasks = list; $('msg').classList.add('hidden'); updateButton();
+  }).catch(()=>{
+    if(!tasks){
+      $('msg').innerHTML = `Couldn't load tasks. Check your connection. <button id="retry">Try again</button>`;
+      $('msg').classList.remove('hidden');
+      $('retry').onclick = refreshTasks;
+    }
+  });
+}
+refreshTasks();
+setInterval(refreshTasks, 60000);       // pick up tasks you add during the party
+setInterval(()=>{ if(!$('play').classList.contains('hidden')) updateButton(); }, 1000);
+if(side) showPlay(); else showSetup();
+</script>
+</body>
+</html>
